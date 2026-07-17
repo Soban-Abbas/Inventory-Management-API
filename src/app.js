@@ -1,10 +1,10 @@
 const express=require("express");
 require("dotenv").config()
+const {startServer}=require("../src/helper/startServer")
 const app=express();
 
 
 
 
-app.listen(3000,()=>{
-    console.log("server is running on port 3000")
-})
+
+startServer(app)
