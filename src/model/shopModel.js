@@ -2,6 +2,7 @@ const { pool } = require("../database/pool");
 const bcrypt=require("bcrypt")
 const crypto = require('crypto')
 const { encryptPassword , verifyPassword} = require("../helper/encryptPassword");
+const { generatetoken }=require("../util/generateJwtToken")
 const { error } = require("console");
 exports.registerNewShop = async (name, email, password) => {
     try {
@@ -64,9 +65,11 @@ exports.loginShop=async(Email,password)=>{
             throw error;
             return
         }
+     
         const {id,name,email,invite_code}=shop.rows[0];
+        const token=generatetoken(id,"shop")
         return{
-            id,name,email,invite_code
+            id,name,email,invite_code,token
         }
     } catch (error) {
         throw error
