@@ -29,8 +29,22 @@ exports.validateEmployeeDetails=[
     .bail()
     .isIn(['cashier' , 'manager'])
     .withMessage("Role can only be manager or cashier")
-    
+    ,
+    check("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password cannot be empty")
+    .bail()
+    .isLength({min:6,max:20})
+    .withMessage("Password length should be inbwteen 6 to 20 digits"),
 
-
+    check("confirm-password")
+    .custom((value,{req})=>{
+        if(value===req.body.password){
+            return true
+        }else{
+            throw new Error("password and confrim password mismaytch")
+        }
+    })
 
 ]

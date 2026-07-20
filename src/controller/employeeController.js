@@ -1,4 +1,5 @@
 const {validationResult}=require("express-validator")
+const employeeModel=require("../model/employeeModel")
 
 exports.registerEmployee=async(req , res , next)=>{
     try {
@@ -8,8 +9,22 @@ exports.registerEmployee=async(req , res , next)=>{
                 error:error.array()
             })
             }
-        console.log(req.body)
+            let{name,phone_number,role,password}=req.body;
+            const shop_id=req.details.id
+    password=password.trim();
+    console.log(password);
+   const registeredEmployee=     await employeeModel.registerEmployee(name,phone_number,role,shop_id,password);
+res.status(201).json({
+    message:"Employee registered Successfully",
+   ... registeredEmployee
+})
+
+
     } catch (error) {
         next(error)
     }
+}
+
+exports.loginEmployee=async(req , res , next)=>{
+
 }

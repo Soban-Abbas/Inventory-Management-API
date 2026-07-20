@@ -7,5 +7,6 @@ const router=express.Router();
 
 
 router.post('/employee', verifyToken, isShop, validateEmployeeDetails,employeeController.registerEmployee)
+router.post('/employee/login',employeeController.loginEmployee)
 
 module.exports=router

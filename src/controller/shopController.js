@@ -27,7 +27,7 @@ exports.loginShop=async(req , res , next)=>{
         const loginShop=await shopModel.loginShop(email,password)
         res.status(200).json({
             Message:"Shop Login Successfully",
-            loginShop
+           ... loginShop
         })
     } catch (error) {
         throw error
