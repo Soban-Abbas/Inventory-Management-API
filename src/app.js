@@ -6,7 +6,7 @@ const { globalErrorHandlingMiddleware }=require("../src/middleware/globalErrorHa
 const bodyParser=require("body-parser")
 const app=express();
 app.use(bodyParser.json());
-app.use("/Inventory-Management-API",shopRoutes)
+app.use("/shop",shopRoutes)
 
 
 app.use(globalErrorHandlingMiddleware);

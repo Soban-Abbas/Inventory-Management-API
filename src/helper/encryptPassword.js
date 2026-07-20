@@ -8,3 +8,16 @@ exports.encryptPassword=async(password,saltRounds)=>{
         throw error
     }
 }
+exports.verifyPassword=async(password,encryptedPassword)=>{
+try {
+    const comparePassword=await bcrypt.compare(password,encryptedPassword);
+    if(comparePassword){
+        return true
+    }
+    else{
+        return false
+    }
+} catch (error) {
+    throw error
+}
+}
