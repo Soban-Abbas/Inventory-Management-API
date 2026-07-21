@@ -6,6 +6,6 @@ const { validateSupplierDetails } = require("../validator/validateSupplierDetail
 const managerController=require("../controller/managerController")
 
 router.post('/supplier',verifyToken,isManager,validateSupplierDetails,managerController.addNewSupplier)
-
+router.get('/suppliers',verifyToken,isManager,managerController.getSuppliers)
 
 module.exports=router

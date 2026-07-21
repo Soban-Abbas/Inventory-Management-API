@@ -25,3 +25,20 @@ res.status(201).json({
         throw error
     }
 }
+
+
+exports.getSuppliers=async(req,res,next)=>{
+try {
+    const page=Number(req.query.page||1);
+    const limit=Number(req.query.limit||3)
+    const offset=(page-1)*limit;
+    const shop_id=req.details.shop_id
+    const suppliers=await managerModel.getSuppliers(shop_id,limit,offset)
+    res.status(200).json({
+        message:"Supplier fetch successfully",
+       ... suppliers
+    })
+} catch (error) {
+    next(error)
+}
+}
