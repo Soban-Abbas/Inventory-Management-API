@@ -1,5 +1,5 @@
 const {pool}=require("../database/pool")
-const { generatetoken }=require("../util/generateJwtToken")
+const { generatetoken }=require("../util/employeeToken")
 const { encryptPassword,verifyPassword }=require('../helper/encryptPassword');
 exports.registerEmployee=async(name,phone_number,role , shop_id,password)=>{
     try {
@@ -55,7 +55,7 @@ exports.loginEmployee=async(Id,password)=>{
             throw error
             return
         }
-      const token=generatetoken(Id,employee.role)
+      const token=generatetoken(Id,employee.role,employee.shop_id)
       const{id,name , phone_number,role}=employee
       return{
         id,name,phone_number,role,token

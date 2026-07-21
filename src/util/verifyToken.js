@@ -14,8 +14,8 @@ exports.verifyToken=(req , res , next)=>{
     }
 
     const decode = jwt.verify(token, process.env.jwtKey);
-const {id , role}=decode;
-req.details={id,role};
+const {id , role,shop_id}=decode;
+req.details={id,role,shop_id};
 next();
 
 }
