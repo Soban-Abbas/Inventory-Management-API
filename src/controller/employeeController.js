@@ -26,5 +26,16 @@ res.status(201).json({
 }
 
 exports.loginEmployee=async(req , res , next)=>{
+    try {
+        const {id, password }=req.body
+       const employee=await employeeModel.loginEmployee(id,password);
+       res.status(200).json({
+        message:"Login Successfull",
+       ... employee
+       })
+    } catch (error) {
+        next(error)
+    }
+
 
 }
