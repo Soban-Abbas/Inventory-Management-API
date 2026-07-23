@@ -8,6 +8,7 @@ const managerRoutes=require("../src/routes/managerRoutes")
 const bodyParser=require("body-parser")
 const app=express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded())
 app.use("/shop",shopRoutes)
 app.use('/shop',shopEmployees);
 app.use('/manager',managerRoutes)

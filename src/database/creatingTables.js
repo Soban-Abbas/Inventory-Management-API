@@ -13,7 +13,7 @@ exports.createTables=async()=>{
             `create table if not exists employees(
             id serial primary key,
             name character varying(50) not null ,
-            phone_number character varying(16) not null unique check (phone_number ~ '^\+[1-9][0-9]{7,14}$'),
+            phone_number character varying(16) not null unique check (phone_number ~ '^\\+[1-9][0-9]{7,14}$'),
             role character varying(15) not null,
             shop_id int not null references shops(id)  on delete cascade on update cascade
             )`,
@@ -33,7 +33,7 @@ exports.createTables=async()=>{
             id serial primary key,
             name character varying(50) not null ,
             address character varying(250) not null,
-            phone_number  character varying(16) not null check (phone_number ~ '^\+[1-9][0-9]{7,14}$'),
+            phone_number  character varying(16) not null check (phone_number ~ '^\\+[1-9][0-9]{7,14}$'),
             shop_id int not null references shops(id) on delete cascade on update cascade
             )`,
 

@@ -1,6 +1,5 @@
-
+const{validationResult}=require("express-validator")
 const managerModel=require("../model/managerModel")
-const {validationResult}=require("express-validator")
 
 
 
@@ -38,6 +37,31 @@ try {
         message:"Supplier fetch successfully",
        ... suppliers
     })
+} catch (error) {
+    next(error)
+}
+}
+
+exports.addNewProduct=async(req , res , next)=>{
+try {
+    const error=validationResult(req);
+    if(!error.isEmpty()){
+        res.status(422).json({
+            error:error.array()
+
+        })
+        return
+    }
+    const{name , category,supplierId}=req.body;
+    const brand=req.body.brand || null;
+    const description = req.body.description || null;
+
+    const variants=req.body.variants
+const shop_id=req.details.shop_id;
+
+
+    console.log(name,category,brand,description,variants,)
+const addedProduct=await managerModel.addNewProduct(name, category,brand,description,variants,shop_id,supplierId)
 } catch (error) {
     next(error)
 }
