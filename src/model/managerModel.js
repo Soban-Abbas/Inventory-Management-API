@@ -52,7 +52,7 @@ exports.regNewSupplier = async (name, address, phone_number, shop_id) => {
 exports.getSuppliers=async(shop_id,limit,offset)=>{
     try {
         const suppliers=await pool.query('select * from suppliers where shop_id=$1 order by id asc limit  $2 offset  $3',[shop_id,limit,offset])
-        console.log(suppliers)
+
         if(suppliers.rowCount<1){
             const error=new Error("No supplier found")
             error.status=404;
@@ -78,40 +78,38 @@ exports.getSuppliers=async(shop_id,limit,offset)=>{
     }
 }
 
-exports.addNewProduct=async(name,categoryName,brand,description,variants,shop_id,supplierId)=>{
+exports.addNewProduct=async(name,categoryName,brand,description,variants,shop_id,supplierId,employee_id)=>{
     const client = await pool.connect()
     try {  //geting one dedicated client from pool
         
-console.log("hello")
+
 
         // start the transaction
         await client.query('BEGIN')
     
-        const category=await this.getCategoryByName(name,shop_id);
-        console.log(category)
-       
+        const category=await this.getCategoryByName(categoryName,shop_id);
+    const product=await this.getProductByName(name,shop_id)
 
         let  addProductDetails;
 
 
         if(category){
-console.log("in into if")
+            console.log("hello from if ")
             addProductDetails =await client.query('insert into products (name,category_id,shop_id,brand,discription) values ($1,$2,$3,$4,$5) returning *' , [name,category,shop_id,brand,description])
 
 
-            console.log("hi inside if ")
+
 
         }else{
-   
+   console.log("hello for else")
             const addCategory=await client.query('insert into categories (name,shop_id) values ($1,$2) returning *',[categoryName,shop_id])
             
             const id=addCategory.rows[0].id
-            console.log(id)
+        
 
 
             addProductDetails =await client.query('insert into products (name,category_id,shop_id, brand,discription) values($1,$2,$3,$4,$5) returning *',[name,id,shop_id,brand,description])
-            console.log(addProductDetails);
-            console.log("hi inside else end ")
+        
         }
 
 let Variants=[];
@@ -124,7 +122,11 @@ let Variants=[];
 
             insertedVariants=await client.query('insert into product_variants(product_id,color,size,price,sku,stock) values ($1,$2,$3,$4,$5,$6) returning *',[addProductDetails.rows[0].id, v.color,v.size,Number(v.sellingPrice), generateSku,v.stock])
 
-         Variants.push(insertedVariants.rows[0])
+         Variants.push({
+          ...  insertedVariants.rows[0],
+          purchasePrice:v.purchasePrice
+         }
+        )
 
 if(insertedVariants.rowCount<1){
     throw new Error("Failed to insert Products")
@@ -134,28 +136,42 @@ if(insertedVariants.rowCount<1){
         };
 
 
-console.log(Variants);
+        for (const v of Variants) {
+            const insertIntoProductSuppliers = await client.query('insert into product_supplier (product_id,supplier_id,purchasePrice,variant_id) values ($1,$2,$3,$4) returning *', [v.product_id,supplierId,v.purchasePrice,v.id])
+
+            if(insertIntoProductSuppliers.rowCount<1){
+                throw new Error("failed to add products")
+            }
 
 
+            
+        }
 
 
+        
 
 
+for (const v of Variants) {
+
+const total_amount=v.purchasePrice*v.stock
 
 
-
-console.log("jits before commit")
-        await client.query("rollback")
-        console.log("rollback")
-        await client.query("commit")
+    const insertIntoHistory=await client.query('insert into track_history (employee_id,product_id,action,unit_price,shop_id,variant_id,units,total_amount) values ($1,$2,$3,$4,$5,$6,$7,$8)  returning *',[employee_id,v.product_id,"purchase",v.purchasePrice,shop_id,v.id,v.stock,total_amount])
 
 
+    if(insertIntoHistory.rowCount<1){
+        throw new Error("product failed to add")
+    }
+
+}
 
 
-
-
-
-
+   
+        await client.query("commit") 
+        
+        return{
+            message:"product added successfully"
+        }
 
     }catch(error){
         await client.query("rollback")
@@ -164,18 +180,36 @@ console.log("jits before commit")
         client.release()
     }
 
-// start transaction
 }
 
 exports.getCategoryByName = async (name, shop_id) => {
     try {
-        const category = await pool.query('select id from categories where shop_id =$1 AND lower(name)=lower($2)', [shop_id, name]);
+        const category = await pool.query('select id from categories where shop_id =$1 AND lower(name)=lower(trim($2))', [shop_id, name]);
+        console.log(category)
         if (category.rowCount > 0) {
             const id = category.rows[0].id
             return id;
 
         } else {
             return false
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+
+exports.getProductByName = async (name, shop_id) => {
+    try {
+        const category = await pool.query('select id from products where shop_id =$1 AND lower(name)=lower(trim($2))', [shop_id, name]);
+        console.log(category)
+        if (category.rowCount > 0) {
+          const error=new Error("Product with this name already exits you can update its details ")
+          error.status=409
+          throw error
+
+        } else {
+            return true;
         }
     } catch (error) {
         throw error

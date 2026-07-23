@@ -58,10 +58,12 @@ try {
 
     const variants=req.body.variants
 const shop_id=req.details.shop_id;
+const employee_id=req.details.id;
 
-
-    console.log(name,category,brand,description,variants,)
-const addedProduct=await managerModel.addNewProduct(name, category,brand,description,variants,shop_id,supplierId)
+const addedProduct=await managerModel.addNewProduct(name, category,brand,description,variants,shop_id,supplierId,employee_id)
+res.status(201).json({
+    ...addedProduct
+})
 } catch (error) {
     next(error)
 }
