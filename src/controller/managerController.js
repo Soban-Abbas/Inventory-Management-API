@@ -68,3 +68,23 @@ res.status(201).json({
     next(error)
 }
 }
+
+
+exports.getAllProducts=async(req , res , next)=>{
+try {
+    const page=req.query.page || 1;
+    const limit=req.query.limit || 2;
+    const employee_id=req.details.id;
+    const shop_id=req.details.shop_id;
+
+
+    
+
+    const offset=(Number(page)-1)*Number(limit);
+    
+    const getAllProducts=await managerModel.getAllProducts(limit,offset,employee_id,shop_id)
+    
+} catch (error) {
+    throw error
+}
+}

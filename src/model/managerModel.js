@@ -216,6 +216,37 @@ exports.getProductByName = async (name, shop_id) => {
     }
 }
 
+exports.getAllProducts=async(limit , offset , employee_id,shop_id)=>{
+
+
+    try {
+
+        const products = await pool.query(`select   products.name,categories.name as category,products.brand,products.discription , product_variants.id,product_variants.color,product_variants.size,product_variants.price,product_variants.stock 
+            from products
+            inner join categories
+            on  categories.id=products.category_id
+            inner join product_variants
+            on products.id=product_variants.product_id
+
+
+            where products.shop_id = $1
+            limit $2 offset $3
+
+              `,[shop_id,limit,offset])
+
+              console.log(products)
+if(products.rowCount<1){
+    throw new Error("products Not found")
+    return
+}
+return{
+   products: products.rows
+}
+    } catch (error) {
+        throw error
+    }
+}
+
 
 
 

@@ -10,4 +10,5 @@ const { productValidation }=require("../validator/productValidation")
 router.post('/supplier',verifyToken,isManager,validateSupplierDetails,managerController.addNewSupplier)
 router.get('/suppliers',verifyToken,isManager,managerController.getSuppliers)
 router.post('/product',verifyToken, isManager,productValidation,managerController.addNewProduct)
+router.get('/product',verifyToken,isManager,managerController.getAllProducts)
 module.exports=router
