@@ -221,7 +221,7 @@ exports.getAllProducts = async (limit, offset, employee_id, shop_id) => {
 
 
     try {
-
+        
         const products = await pool.query(`select products.id as productId,  products.name,categories.name as category,products.brand,products.discription , product_variants.id as variantId,product_variants.color,product_variants.size,product_variants.price,product_variants.stock , product_supplier.supplier_id as supplierId
             from products
             inner join categories
@@ -239,8 +239,10 @@ exports.getAllProducts = async (limit, offset, employee_id, shop_id) => {
 
         console.log(products)
         if (products.rowCount < 1) {
-            throw new Error("products Not found")
-            return
+            const error=new  Error("products Not found")
+            error.status=404
+            throw error
+            
         }
         return {
             products: products.rows

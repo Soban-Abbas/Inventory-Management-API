@@ -7,5 +7,5 @@ const cashierController=require("../controller/cashierController")
 const router= express.Router()
 router.get('/product',verifyToken,isCashier,cashierController.getProductById)
 
-
+router.get('/products', verifyToken, isCashier, cashierController.getAllProducts)
 module.exports=router
