@@ -58,7 +58,6 @@ try {
 
     const variants=req.body.variants
 const shop_id=req.details.shop_id;
-const employee_id=req.details.id;
 
 const addedProduct=await managerModel.addNewProduct(name, category,brand,description,variants,shop_id,supplierId,employee_id)
 res.status(201).json({
@@ -83,8 +82,31 @@ try {
     const offset=(Number(page)-1)*Number(limit);
     
     const getAllProducts=await managerModel.getAllProducts(limit,offset,employee_id,shop_id)
+
+    res.status(200).json({
+        ...getAllProducts
+    })
     
 } catch (error) {
     throw error
 }
+}
+
+exports.updateProduct=async(req ,res , next)=>{
+    try {
+        const error=validationResult(req);
+        if(!error.isEmpty()){
+         return   res.status(422).json({
+                error:error.array()
+            })
+        }    
+
+const updatedProduct=await managerModel.updateProducts(req.body,req.details)
+res.status(201).json({
+    message:"Product Updated Successfully",
+    updatedProduct
+})
+    } catch (error) {
+        next(error)
+    }
 }
