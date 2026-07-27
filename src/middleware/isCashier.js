@@ -1,4 +1,5 @@
-exports.isManager = (req, res, next) => {
+exports.isCashier = (req, res, next) => {
+    
     if (req.details.role === "cashier") {
         next()
     } else {
