@@ -11,4 +11,5 @@ const { sendInputValidationError }=require("../helper/sendInputValidtionError")
 router.post('/registration',shopRegistrationValidation,sendInputValidationError, shopController.registerShop)
 router.post('/login', validateLoginInputs,shopController.loginShop)
 router.post('/employee', verifyToken, isShop, validateEmployeeDetails,employeeController.registerEmployee)
+router.get('/history',verifyToken,isShop,shopController.getRecord)
 module.exports=router

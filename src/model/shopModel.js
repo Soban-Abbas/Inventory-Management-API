@@ -75,3 +75,17 @@ exports.loginShop=async(Email,password)=>{
         throw error
     }
 }
+exports.getHistory=async(shop_id)=>{
+    try {
+        const history= await pool.query('select employee_id , action , date, total_amount from track_history where shop_id=$1',[shop_id]);
+        if(history.rowCount<1){
+            const error = new Error("Not record found ");
+            error.status=404;
+            throw error
+        }else{
+            return history.rows
+        }
+    } catch (error) {
+        throw error
+    }
+}
