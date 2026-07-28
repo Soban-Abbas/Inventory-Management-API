@@ -72,7 +72,7 @@ res.status(201).json({
 exports.getAllProducts=async(req , res , next)=>{
 try {
     const page=req.query.page || 1;
-    const limit=req.query.limit || 2;
+    const limit=req.query.limit || 3;
     const employee_id=req.details.id;
     const shop_id=req.details.shop_id;
 
@@ -124,6 +124,17 @@ try {
             error:"image is required "
         })
     }
+console.log(req.file)
+const{productId,variantId}=req.body;
+const{id,shop_id}=req.details;
+
+
+const path=`upload/${req.file.filename}`
+    const addImage=await managerModel.uploadImage(Number(productId) , Number(variantId) , Number(shop_id) , id, path)
+    res.status(401).json({
+        message:"image uploaded successfully",
+        addImage
+    })
 } catch (error) {
     console.log(error)
     next(error)

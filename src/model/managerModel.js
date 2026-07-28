@@ -222,7 +222,7 @@ exports.getAllProducts = async (limit, offset, employee_id, shop_id) => {
 
     try {
         
-        const products = await pool.query(`select products.id as productId,  products.name,categories.name as category,products.brand,products.discription , product_variants.id as variantId,product_variants.color,product_variants.size,product_variants.price,product_variants.stock , product_supplier.supplier_id as supplierId
+        const products = await pool.query(`select products.id as productId,  products.name,categories.name as category,products.brand,products.discription , product_variants.id as variantId,product_variants.color,product_variants.size,product_variants.price,product_variants.stock , product_image.image_url ,product_supplier.supplier_id as supplierId
             from products
             inner join categories
             on  categories.id=products.category_id
@@ -230,7 +230,8 @@ exports.getAllProducts = async (limit, offset, employee_id, shop_id) => {
             on products.id=product_variants.product_id
             inner join product_supplier
             on product_variants.id=product_supplier.variant_id
-
+left join product_image
+on product_variants.id=product_image.variant_id and product_image.shop_id=products.shop_id
 
             where products.shop_id = $1
             limit $2 offset $3
@@ -256,12 +257,14 @@ exports.getAllProducts = async (limit, offset, employee_id, shop_id) => {
 
 exports.getProductById = async (productId, variantId) => {
     try {
-        const product = await pool.query(`select products.name , categories.name as categoryName, product_variants.color,  product_variants.size,product_variants.sku,product_variants.stock,product_variants.price 
+        const product = await pool.query(`select products.name , categories.name as categoryName, product_variants.color,  product_variants.size,product_variants.sku,product_variants.stock,product_variants.price, product_image.image_url
             from products
             inner join categories
             on categories.id=products.category_id
             inner join product_variants
             on products.id=product_variants.product_id
+            left join product_image
+            on product_variants.id=product_image.variant_id and products.shop_id=product_image.shop_id
             where products.id=$1 AND product_variants.id=$2`, [Number(productId), Number(variantId)])
         if(product.rowCount<1){
             const error= new Error("product Not found")
@@ -357,6 +360,20 @@ return{
     }
 }
 
+
+exports.uploadImage=async(productId, variantId,shop_id,employee_id,path )=>{
+    try {
+        const uplaodImage=await pool.query('insert into product_image (product_id,image_url,variant_id, shop_id) values ($1,$2,$3,$4) returning *',[productId,path,variantId,shop_id])
+        if(uplaodImage.rowCount>0){
+            return uplaodImage.rows[0]
+        }else{
+            const error = new Error(" Image not uplaoded")
+            throw error
+        }
+    } catch (error) {
+        throw error
+    }
+}
 
 
 
