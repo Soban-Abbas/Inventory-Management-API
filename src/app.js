@@ -5,7 +5,7 @@ const shopEmployees=require("../src/routes/employeeRoutes")
 const shopRoutes=require("../src/routes/shopRoutes");
 const { globalErrorHandlingMiddleware }=require("../src/middleware/globalErrorHandlingMiddleware")
 const managerRoutes=require("../src/routes/managerRoutes")
-const cashierRoutes=require("../src/routes/cashier")
+const cashierRoutes=require("./routes/cashierRoutes")
 const bodyParser=require("body-parser")
 const app=express();
 app.use(bodyParser.json());

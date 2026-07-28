@@ -1,4 +1,6 @@
+const {validationResult}=require("express-validator")
 const managerModel=require("../model/managerModel")
+const cashierModel=require("../model/cashierModel")
 exports.getProductById=async(req , res , next)=>{
     try {
         console.log("hello")
@@ -35,4 +37,25 @@ try {
 } catch (error) {
     next(error)
 }
+}
+
+exports.sellProduct=async(req , res, next)=>{
+    try {
+        
+        const error=validationResult(req)
+        if(!error.isEmpty()){
+          return  res.status(422).json({
+                error:error.array()
+            })
+        }
+const{productId,variantId,units,unitPrice}=req.body;
+const{id,shop_id}=req.details;
+const sellingProduct=await cashierModel.sellingProduct(productId,variantId,units,unitPrice,id,shop_id)
+res.status(200).json({
+    message:"product Sell",
+    productDetails:sellingProduct
+})
+    } catch (error) {
+        next(error)
+    }
 }
