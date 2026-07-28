@@ -1,6 +1,10 @@
 const express=require("express");
 const multer =require("multer");
+const { fileStorage ,fileFilter} = require("../helper/filestorage")
+const upload=multer({storage:fileStorage,fileFilter:fileFilter})
+const { velidateImageInput }=require("../validator/velidateImageInput")
 const router=express.Router();
+
 const { updateProductValidation } = require("../validator/updateProductValidation");
 const {isManager}=require("../middleware/isManager");
 const{verifyToken}=require("../util/verifyToken")
@@ -13,4 +17,5 @@ router.get('/suppliers',verifyToken,isManager,managerController.getSuppliers)
 router.post('/product',verifyToken, isManager,productValidation,managerController.addNewProduct)
 router.get('/product',verifyToken,isManager,managerController.getAllProducts);
 router.put('/product',verifyToken,isManager ,updateProductValidation,managerController.updateProduct)
+router.post('/image', verifyToken, isManager, upload.single('image'), velidateImageInput,managerController.uploadImage)
 module.exports=router

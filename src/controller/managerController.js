@@ -110,3 +110,22 @@ res.status(201).json({
         next(error)
     }
 }
+
+exports.uploadImage=async(req , res , next)=>{
+try {
+    const error=validationResult(req);
+    if(!error.isEmpty()){
+      return  res.status(422).json({
+            error:error.array()
+        })
+    }
+    if(!req.file){
+      return  res.status(400).json({
+            error:"image is required "
+        })
+    }
+} catch (error) {
+    console.log(error)
+    next(error)
+}
+}

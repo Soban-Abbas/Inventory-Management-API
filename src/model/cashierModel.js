@@ -33,13 +33,7 @@ return{
    totalAmount:Number(units*unitPrice)
 }
 
-
-
-
-
-
-
-    } catch (error) {
+ } catch (error) {
         await client.query("rollback")
         throw error
     }finally{
