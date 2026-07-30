@@ -75,14 +75,27 @@ exports.loginShop=async(Email,password)=>{
         throw error
     }
 }
+
 exports.getHistory=async(shop_id)=>{
     try {
-        const history= await pool.query('select employee_id , action , date, total_amount from track_history where shop_id=$1',[shop_id]);
+
+        const history= await pool.query(`select employees.name , track_history.action, products.name as productName,track_history.units , track_history.date, track_history.total_amount
+             from track_history
+            
+            inner join employees
+            on track_history.employee_id=employees.id
+
+            inner join products
+            on track_history.product_id=products.id
+            
+            
+            where track_history.shop_id=$1 `,[shop_id]);
         if(history.rowCount<1){
             const error = new Error("Not record found ");
             error.status=404;
             throw error
         }else{
+         
             return history.rows
         }
     } catch (error) {

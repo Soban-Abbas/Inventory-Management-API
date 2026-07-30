@@ -1,20 +1,36 @@
 const {pool}=require("../database/pool")
+const crypto=require("crypto")
 const { generatetoken }=require("../util/employeeToken")
 const { encryptPassword,verifyPassword }=require('../helper/encryptPassword');
 exports.registerEmployee=async(name,phone_number,role , shop_id,password)=>{
     try {
+        const encryptedPassword = await encryptPassword(password, 10)
+        let registerEmployee;
+if(role.trim().toLowerCase()==='cashier'){
+    let joiningId = 'cashier-'+crypto.randomBytes(4).toString("hex")
 
 
-        const encryptedPassword=await encryptPassword(password,10)
-        const registerEmployee=await pool.query('insert into employees (name ,phone_number,role,shop_id,password ) values ($1,$2,$3,$4,$5) returning *',[name,phone_number,role,shop_id,encryptedPassword])
+     registerEmployee = await pool.query('insert into employees (name ,phone_number,role,shop_id,password,joiningid ) values ($1,$2,$3,$4,$5,$6) returning *', [name, phone_number, role, shop_id, encryptedPassword, joiningId])
 
+}else{
+
+
+    let joiningId = 'manager-' + crypto.randomBytes(4).toString("hex")
+
+
+    registerEmployee  = await pool.query('insert into employees (name ,phone_number,role,shop_id,password,joiningid ) values ($1,$2,$3,$4,$5,$6) returning *', [name, phone_number, role, shop_id, encryptedPassword, joiningId])
+
+
+}
+      
+       
 if(registerEmployee.rowCount<1){
     const error=new Error("Registration Unsuccessfull")
     throw error
 }else{
-    const{id, name,phone_number,role}=registerEmployee.rows[0]
+    const{joiningid, name,phone_number,role}=registerEmployee.rows[0]
 return{
-   id, name,phone_number,role
+   joiningid, name,phone_number,role
 }}
     } catch (error) {
         if (error.code === '23505'){
@@ -25,9 +41,9 @@ return{
     }
 }
 
-exports.findEmployeeById=async(Id)=>{
+exports.findEmployeeById=async(joiningid)=>{
     try {
-        const employee=await pool.query('select * from employees where id=$1',[Id])
+        const employee=await pool.query('select * from employees where joiningid=$1',[joiningid])
         if(employee.rowCount<1){
             const error=new Error("Wrong id or password");
             error.status=401;
@@ -45,9 +61,9 @@ return
     }
 }
 
-exports.loginEmployee=async(Id,password)=>{
+exports.loginEmployee=async(joiningid,password)=>{
     try {
-        const employee=await this.findEmployeeById(Id);
+        const employee=await this.findEmployeeById(joiningid);
         const correctPassword=await verifyPassword(password,employee.password);
         if(!correctPassword){
             const error=new Error("Wrong Id or password");
@@ -55,10 +71,10 @@ exports.loginEmployee=async(Id,password)=>{
             throw error
             return
         }
-      const token=generatetoken(Id,employee.role,employee.shop_id)
+      const token=generatetoken(employee.id,employee.role,employee.shop_id)
       const{id,name , phone_number,role}=employee
       return{
-        id,name,phone_number,role,token
+        name,phone_number,role,token
       }
     } catch (error) {
         throw error

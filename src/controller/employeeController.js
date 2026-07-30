@@ -27,8 +27,8 @@ res.status(201).json({
 
 exports.loginEmployee=async(req , res , next)=>{
     try {
-        const {id, password }=req.body
-       const employee=await employeeModel.loginEmployee(id,password);
+        const {joiningid, password }=req.body
+       const employee=await employeeModel.loginEmployee(joiningid,password);
        res.status(200).json({
         message:"Login Successfull",
        ... employee

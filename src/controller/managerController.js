@@ -55,7 +55,7 @@ try {
     const{name , category,supplierId}=req.body;
     const brand=req.body.brand || null;
     const description = req.body.description || null;
-
+const employee_id=req.details.id;
     const variants=req.body.variants
 const shop_id=req.details.shop_id;
 
@@ -131,9 +131,10 @@ const{id,shop_id}=req.details;
 
 const path=`upload/${req.file.filename}`
     const addImage=await managerModel.uploadImage(Number(productId) , Number(variantId) , Number(shop_id) , id, path)
-    res.status(401).json({
+
+    
+    res.status(200).json({
         message:"image uploaded successfully",
-        addImage
     })
 } catch (error) {
     console.log(error)

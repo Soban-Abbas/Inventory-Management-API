@@ -42,10 +42,12 @@ exports.getRecord=async(req , res , next)=>{
 
         // Define columns in the worksheet 
         worksheet.columns = [
-            { header: "Employee Id", key: "employee_id", width: 15 },
-            { header: "action ", key: "action", width: 15 },
-            { header: "date", key: "date", width: 25 },
-            { header: "total_amount", key: "total_amount", width: 10 },
+            { header: "Employee name", key: "name", width: 15 },
+            { header: "Product Name", key: "productname", width: 40 },
+            { header: "Action ", key: "action", width: 15 },
+            { header: "Date", key: "date", width: 15 },
+            { header: "Units", key: "units", width: 10 },
+            { header: "Total Amount", key: "total_amount", width: 15 },
         ];
 
 
